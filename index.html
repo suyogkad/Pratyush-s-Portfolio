@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pratyush GC | Networking & IT Security</title>
+    <title>Pratyush GC | IT Security & Networking</title>
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/shield-confirmation.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,57 +16,111 @@
         <div class="logo">PGC<span>.</span></div>
         <ul>
             <li><a href="#about">About</a></li>
-            <li><a href="#passions">Interests</a></li>
+            <li><a href="#passions">Experience</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
 
     <section class="hero">
         <div class="hero-content" data-aos="fade-up">
+            <p class="console-text">root@pratyush_gc:~# <span id="typewriter"></span></p>
             <h1>Pratyush GC</h1>
-            <p class="subtitle">Networking & IT Security Student @ Islington College</p>
-            <div class="badge">London Metropolitan University</div>
-            <a href="#about" class="btn">View Portfolio</a>
+            <p class="subtitle">BSc (Hons) Networking & IT Security Student</p>
+            <div class="badge">Islington College | London Metropolitan University</div>
         </div>
     </section>
 
     <section id="about" class="about">
-        <div class="container" data-aos="fade-right">
-            <h2>01. Systems & Security</h2>
+        <div class="container" data-aos="fade-up">
+            <h2 class="section-title">01. Identity & System Logs</h2>
             <div class="terminal">
-                <p><span class="prompt">guest@pratyush:~$</span> intro --whoami</p>
-                <p class="response">Currently pursuing a BSc (Hons) in Networking and IT Security. I thrive at the intersection of complex network architecture and robust digital defense.</p>
-                <p><span class="prompt">guest@pratyush:~$</span> skills --list</p>
-                <p class="response">Coding, Problem Solving, Network Analysis, Linux.</p>
+                <div class="terminal-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="terminal-title">bash — 80x24</span>
+                </div>
+                <div class="terminal-body">
+                    <p><span class="prompt">guest@pratyush:~$</span> finger pratyush --profile</p>
+                    <p class="response">
+                        [Status] 1st Year Student @ Islington College.<br>
+                        [Focus] Networking, IT Security, System Hardening.<br>
+                        [Skills] Coding, Problem Solving, Linux Environment.
+                    </p>
+                    <p><span class="prompt">guest@pratyush:~$</span> ls -a /hobbies</p>
+                    <p class="response">.f1_racing  .calisthenics  .guitar_strums  .football</p>
+                    <p><span class="prompt">guest@pratyush:~$</span> <span class="cursor">_</span></p>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="passions" class="passions">
         <div class="container">
-            <h2 data-aos="fade-up">02. Beyond the Screen</h2>
+            <h2 class="section-title" data-aos="fade-up">02. Hardware & Hobbies</h2>
             <div class="grid">
-                <div class="card" data-aos="zoom-in">
-                    <img src="https://images.unsplash.com/photo-1533130061792-64b345e4a833?auto=format&fit=crop&w=400&q=80" alt="F1 Racing">
-                    <h3>F1 & Speed</h3>
-                    <p>Fascinated by the engineering and data-driven strategy of Formula 1.</p>
+                
+                <div class="card" data-aos="flip-left">
+                    <div class="glyph-container">
+<pre class="ascii-art">
+   _______
+  /  _____|
+ |  |  ___ 
+ |  | |_  |
+ |  |___| |
+  \_______/
+ [ F1_AERO ]
+</pre>
+                    </div>
+                    <h3>F1 & Tech</h3>
+                    <p>Fascinated by high-speed aerodynamics and real-time telemetry data.</p>
                 </div>
-                <div class="card" data-aos="zoom-in" data-aos-delay="100">
-                    <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=400&q=80" alt="Calisthenics">
+
+                <div class="card" data-aos="flip-left" data-aos-delay="100">
+                    <div class="glyph-container">
+<pre class="ascii-art">
+    _  _
+  _| || |_
+ |_      _|
+  _|_  _|_
+ |_      _|
+   |_||_|
+ [ CALI_STR ]
+</pre>
+                    </div>
                     <h3>Calisthenics</h3>
-                    <p>Bodyweight training to maintain mental clarity and physical discipline.</p>
+                    <p>Bodyweight training to maintain peak mental focus and discipline.</p>
                 </div>
-                <div class="card" data-aos="zoom-in" data-aos-delay="200">
-                    <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=400&q=80" alt="Guitar">
+
+                <div class="card" data-aos="flip-left" data-aos-delay="200">
+                    <div class="glyph-container">
+<pre class="ascii-art">
+  || | | ||
+  || | | ||
+  ||_|_|_||
+  |_______|
+  /       \
+ [ ACST_MOD ]
+</pre>
+                    </div>
                     <h3>Acoustics</h3>
-                    <p>Casual guitar strummer finding rhythm in the chaos.</p>
+                    <p>Casual guitar strummer. Finding rhythm in complex sequences.</p>
                 </div>
+
             </div>
         </div>
     </section>
 
+    <section id="contact" class="social-dock-container">
+        <div class="social-dock" data-aos="fade-up">
+            <a href="https://github.com" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://linkedin.com" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://discord.com" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+        </div>
+    </section>
+
     <footer>
-        <p>© 2024 Pratyush GC | Built for Security & Speed</p>
+        <p>SECURED BY PGC // 2024 // EST. NEPAL</p>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
