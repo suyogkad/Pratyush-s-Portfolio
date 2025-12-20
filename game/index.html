@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Arrow Runner Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Arrow Runner: Power-Up Edition</title>
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -13,12 +13,14 @@
         padding: 0;
         box-sizing: border-box;
         font-family: 'Orbitron', sans-serif;
+        touch-action: none;
     }
 
     body {
         background: radial-gradient(circle at top, #0f2027, #000);
         height: 100vh;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         color: #fff;
@@ -27,89 +29,76 @@
 
     .game-wrapper {
         display: flex;
-        gap: 30px;
-        align-items: center;
+        gap: 20px;
+        align-items: flex-start;
+        max-width: 95vw;
     }
 
     canvas {
         background: linear-gradient(#111, #000);
         border: 3px solid #00ffe1;
-        box-shadow: 0 0 30px #00ffe1;
+        box-shadow: 0 0 20px #00ffe1;
         border-radius: 12px;
+        max-width: 100%;
+        max-height: 60vh;
     }
 
     .side-panel {
         width: 220px;
-        padding: 20px;
+        padding: 15px;
         background: rgba(0, 0, 0, 0.7);
         border-radius: 12px;
         border: 2px solid #00ffe1;
-        box-shadow: 0 0 15px #00ffe1;
     }
 
-    .side-panel h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #00ffe1;
-        letter-spacing: 2px;
+    .stat-box {
+        margin-bottom: 15px;
+        padding: 8px;
+        border-bottom: 1px solid rgba(0, 255, 225, 0.3);
     }
 
-    .score {
-        font-size: 18px;
-        margin-bottom: 25px;
-        text-align: center;
+    .stat-label { font-size: 10px; color: #00ffe1; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-value { font-size: 20px; font-weight: bold; }
+
+    @media (max-width: 768px) {
+        .game-wrapper { flex-direction: column; align-items: center; }
+        .side-panel { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 10px; }
+        .stat-box { margin-bottom: 0; border-bottom: none; text-align: center; }
+        .controls, h3 { display: none; }
+        .start-btn { grid-column: span 3; margin-top: 5px; }
     }
 
-    .controls {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        justify-items: center;
-        margin-top: 10px;
-    }
-
-    .key {
-        width: 50px;
-        height: 50px;
-        border: 2px solid #00ffe1;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
+    .touch-controls {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
         justify-content: center;
-        font-size: 20px;
-        box-shadow: inset 0 0 10px #00ffe1;
+        z-index: 10;
     }
 
-    .key.empty {
-        border: none;
-        box-shadow: none;
+    @media (max-pointer: coarse) { .touch-controls { display: flex; } }
+
+    .d-pad { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(2, 60px); gap: 8px; }
+    .btn {
+        width: 60px; height: 60px; background: rgba(0, 255, 225, 0.1);
+        border: 2px solid #00ffe1; border-radius: 50%;
+        display: flex; justify-content: center; align-items: center; font-size: 20px;
+        color: #00ffe1;
     }
+    .btn:active { background: #00ffe1; color: #000; }
 
     .start-btn {
-        margin-top: 25px;
-        width: 100%;
-        padding: 12px;
-        background: #00ffe1;
-        color: #000;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        font-size: 16px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        width: 100%; padding: 12px; background: #00ffe1; color: #000;
+        border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+        transition: 0.3s;
     }
-
-    .start-btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px #00ffe1;
-    }
+    .start-btn:hover { background: #fff; box-shadow: 0 0 15px #fff; }
 
     .game-over {
-        position: absolute;
-        font-size: 32px;
-        color: red;
-        display: none;
-        text-shadow: 0 0 20px red;
+        position: absolute; text-align: center; display: none;
+        z-index: 100; background: rgba(0,0,0,0.9); padding: 30px; border-radius: 15px;
+        border: 2px solid red; box-shadow: 0 0 30px red;
     }
 </style>
 </head>
@@ -117,82 +106,114 @@
 <body>
 
 <div class="game-wrapper">
-
-    <canvas id="gameCanvas" width="500" height="600"></canvas>
+    <canvas id="gameCanvas" width="400" height="500"></canvas>
 
     <div class="side-panel">
-        <h2>ARROW RUNNER</h2>
-
-        <div class="score">
-            Score: <span id="score">0</span>
+        <div class="stat-box">
+            <div class="stat-label">Score</div>
+            <div class="stat-value" id="score">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Best</div>
+            <div class="stat-value" id="highScore">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Level</div>
+            <div class="stat-value" id="level">1</div>
         </div>
 
-        <h3 style="text-align:center;margin-bottom:10px;">Controls</h3>
-
-        <div class="controls">
-            <div class="key empty"></div>
-            <div class="key">⬆️</div>
-            <div class="key empty"></div>
-
-            <div class="key">⬅️</div>
-            <div class="key">⬇️</div>
-            <div class="key">➡️</div>
-        </div>
-
-        <button class="start-btn" onclick="startGame()">Start Game</button>
+        <button class="start-btn" onclick="startGame()">START RUN</button>
     </div>
-
 </div>
 
-<div class="game-over" id="gameOverText">GAME OVER</div>
+<div class="touch-controls">
+    <div class="d-pad">
+        <div style="grid-column: 2" class="btn" id="btn-up">▲</div>
+        <div style="grid-row: 2; grid-column: 1" class="btn" id="btn-left">◀</div>
+        <div style="grid-row: 2; grid-column: 2" class="btn" id="btn-down">▼</div>
+        <div style="grid-row: 2; grid-column: 3" class="btn" id="btn-right">▶</div>
+    </div>
+</div>
+
+<div class="game-over" id="gameOverMenu">
+    <h1 style="color:red; margin-bottom:10px;">SYSTEM CRASH</h1>
+    <p id="finalScoreDisplay">Score: 0</p>
+    <button class="start-btn" style="margin-top:20px;" onclick="startGame()">REBOOT</button>
+</div>
 
 <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-
+    
     const scoreEl = document.getElementById("score");
-    const gameOverText = document.getElementById("gameOverText");
+    const highScoreEl = document.getElementById("highScore");
+    const levelEl = document.getElementById("level");
+    const gameOverMenu = document.getElementById("gameOverMenu");
+    const finalScoreDisplay = document.getElementById("finalScoreDisplay");
 
-    let player, enemies, score, gameRunning, enemyTimer;
-
+    let player, enemies, powerUps, score, highScore, level, gameRunning, enemyTimer, powerTimer, startTime;
+    let baseEnemySpeed, spawnRate;
     const keys = {};
 
+    highScore = localStorage.getItem("arrowRunnerHigh") || 0;
+    highScoreEl.textContent = highScore;
+
+    // Control Listeners
     document.addEventListener("keydown", e => keys[e.key] = true);
     document.addEventListener("keyup", e => keys[e.key] = false);
 
+    const touchMap = { 'btn-up': 'ArrowUp', 'btn-down': 'ArrowDown', 'btn-left': 'ArrowLeft', 'btn-right': 'ArrowRight' };
+    Object.keys(touchMap).forEach(id => {
+        const btn = document.getElementById(id);
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[touchMap[id]] = true; });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[touchMap[id]] = false; });
+    });
+
     function startGame() {
-        player = {
-            x: 230,
-            y: 520,
-            size: 30,
-            speed: 6
-        };
-
+        player = { x: 185, y: 400, size: 25, speed: 5, shield: false };
         enemies = [];
+        powerUps = [];
         score = 0;
-        gameRunning = true;
+        level = 1;
+        baseEnemySpeed = 3;
+        spawnRate = 45;
         enemyTimer = 0;
-        scoreEl.textContent = score;
-        gameOverText.style.display = "none";
+        powerTimer = 0;
+        gameRunning = true;
+        startTime = Date.now();
 
+        scoreEl.textContent = score;
+        levelEl.textContent = level;
+        gameOverMenu.style.display = "none";
         requestAnimationFrame(gameLoop);
     }
 
     function gameLoop() {
         if (!gameRunning) return;
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        updateDifficulty();
         movePlayer();
         drawPlayer();
-
         handleEnemies();
+        handlePowerUps();
         checkCollisions();
 
         score++;
         scoreEl.textContent = score;
-
         requestAnimationFrame(gameLoop);
+    }
+
+    function updateDifficulty() {
+        let elapsed = (Date.now() - startTime) / 1000;
+        let newLevel = Math.floor(elapsed / 20) + 1;
+        if (newLevel > level) {
+            level = newLevel;
+            levelEl.textContent = level;
+            baseEnemySpeed += 0.7;
+            spawnRate = Math.max(12, spawnRate - 4);
+            player.speed += 0.2;
+        }
     }
 
     function movePlayer() {
@@ -204,7 +225,12 @@
 
     function drawPlayer() {
         ctx.fillStyle = "#00ffe1";
-        ctx.shadowBlur = 20;
+        if (player.shield) {
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(player.x - 4, player.y - 4, player.size + 8, player.size + 8);
+        }
+        ctx.shadowBlur = 15;
         ctx.shadowColor = "#00ffe1";
         ctx.fillRect(player.x, player.y, player.size, player.size);
         ctx.shadowBlur = 0;
@@ -212,51 +238,94 @@
 
     function handleEnemies() {
         enemyTimer++;
-
-        if (enemyTimer > 40) {
+        if (enemyTimer > spawnRate) {
             enemies.push({
-                x: Math.random() * (canvas.width - 30),
+                x: Math.random() * (canvas.width - 25),
                 y: -30,
-                size: 30,
-                speed: 4 + Math.random() * 3
+                size: 25,
+                speed: baseEnemySpeed + Math.random() * 2
             });
             enemyTimer = 0;
         }
 
         enemies.forEach(enemy => {
             enemy.y += enemy.speed;
-
-            ctx.fillStyle = "red";
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = "red";
+            ctx.fillStyle = "#ff4d4d";
             ctx.fillRect(enemy.x, enemy.y, enemy.size, enemy.size);
-            ctx.shadowBlur = 0;
         });
+        enemies = enemies.filter(enemy => enemy.y < canvas.height + 50);
+    }
 
-        enemies = enemies.filter(enemy => enemy.y < canvas.height + enemy.size);
+    function handlePowerUps() {
+        powerTimer++;
+        // Drop powerup every ~8-12 seconds
+        if (powerTimer > 500 + Math.random() * 300) {
+            const types = ['shield', 'slowmo'];
+            powerUps.push({
+                x: Math.random() * (canvas.width - 20),
+                y: -30,
+                type: types[Math.floor(Math.random() * types.length)],
+                size: 20
+            });
+            powerTimer = 0;
+        }
+
+        powerUps.forEach((p, index) => {
+            p.y += 2;
+            ctx.beginPath();
+            ctx.arc(p.x + 10, p.y + 10, 10, 0, Math.PI * 2);
+            ctx.fillStyle = p.type === 'shield' ? '#3399ff' : '#ffcc00';
+            ctx.fill();
+            ctx.closePath();
+
+            // Collection check
+            if (player.x < p.x + 20 && player.x + player.size > p.x &&
+                player.y < p.y + 20 && player.y + player.size > p.y) {
+                applyPowerUp(p.type);
+                powerUps.splice(index, 1);
+            }
+        });
+        powerUps = powerUps.filter(p => p.y < canvas.height + 50);
+    }
+
+    function applyPowerUp(type) {
+        if (type === 'shield') player.shield = true;
+        if (type === 'slowmo') {
+            enemies.forEach(e => e.speed *= 0.3);
+            baseEnemySpeed *= 0.8; // Permanent slight slowdown
+        }
     }
 
     function checkCollisions() {
-        enemies.forEach(enemy => {
-            if (
-                player.x < enemy.x + enemy.size &&
+        enemies.forEach((enemy, index) => {
+            if (player.x < enemy.x + enemy.size &&
                 player.x + player.size > enemy.x &&
                 player.y < enemy.y + enemy.size &&
-                player.y + player.size > enemy.y
-            ) {
-                endGame();
+                player.y + player.size > enemy.y) {
+                
+                if (player.shield) {
+                    player.shield = false;
+                    enemies.splice(index, 1); // Destroy that enemy
+                } else {
+                    endGame();
+                }
             }
         });
     }
 
     function endGame() {
         gameRunning = false;
-        gameOverText.style.display = "block";
-        gameOverText.style.top = "50%";
-        gameOverText.style.left = "50%";
-        gameOverText.style.transform = "translate(-50%, -50%)";
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem("arrowRunnerHigh", highScore);
+            highScoreEl.textContent = highScore;
+        }
+        finalScoreDisplay.textContent = `Score: ${score} (Lvl ${level})`;
+        gameOverMenu.style.display = "block";
+        gameOverMenu.style.top = "50%";
+        gameOverMenu.style.left = "50%";
+        gameOverMenu.style.transform = "translate(-50%, -50%)";
     }
 </script>
-
 </body>
 </html>
